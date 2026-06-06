@@ -1,0 +1,367 @@
+# ClarityWise Radiology Demo Artifact by Grounded DI LLC
+
+## Blinded Single-Image Coronary CTA Analysis + Ground Truth Reconciliation
+
+Source: https://www.rsna.org/news/2024/january/top-images-in-radiology
+
+> **Public-safe status:** Educational demo only. Not a clinical interpretation, medical device claim, diagnostic product claim, or substitute for radiologist review.
+
+---
+
+## Table of Contents
+
+- [Demo Context](#demo-context)
+- [Blinded Image-First Result](#blinded-image-first-result)
+- [Why the Structure Was Useful](#why-the-structure-was-useful)
+- [Key Blinded Findings](#key-blinded-findings)
+- [Ground Truth Reconciliation](#ground-truth-reconciliation)
+- [Corrected Radiology-Style Impression](#corrected-radiology-style-impression)
+- [What ClarityWise Did Well](#what-claritywise-did-well)
+- [What Should Be Improved](#what-should-be-improved)
+- [Public-Safe Formula Layer](#public-safe-formula-layer)
+- [Formula Layer Takeaway](#formula-layer-takeaway)
+- [Patient-Friendly Summary](#patient-friendly-summary)
+- [Demo Takeaway](#demo-takeaway)
+- [Final Position](#final-position)
+- [Safety Notes](#safety-notes)
+
+---
+
+## Demo Context
+
+This demo evaluates **ClarityWise** on a blinded, single-image radiology reasoning task.
+
+The input was one static CT angiogram figure from a case involving a 64-year-old woman. ClarityWise was instructed to analyze only the visible image and image labels, without using the caption, DOI, article title, known answer, or outside case context.
+
+The goal was not to replace a radiologist or produce a clinical diagnosis from one image. The goal was to test whether the system could structure radiology reasoning safely by separating:
+
+- visible evidence;
+- diagnostic inference;
+- uncertainty;
+- needed confirmation.
+
+---
+
+## Blinded Image-First Result
+
+ClarityWise identified the image as a **cardiac/coronary CT angiogram** based on the visible **RCA** and **LCX** labels.
+
+It recognized a complex abnormal vascular-appearing cluster adjacent to the heart, marked by asterisks on the figure. It also identified apparent relationships between the abnormality and both the right coronary artery and left circumflex artery territories.
+
+The system described the lesion as a probable complex vascular abnormality and favored a **coronary fistula / coronary-cameral vascular communication or vascular malformation** as the leading diagnostic category.
+
+It did not state a definitive named diagnosis because the drainage site and full vascular pathway were not safely established from the single still image alone.
+
+That restraint was appropriate under the prompt constraints.
+
+---
+
+## Why the Structure Was Useful
+
+The output was useful because it did not merely generate a radiology-style paragraph. It organized the reasoning into an audit-ready structure:
+
+| Layer | Function |
+|---|---|
+| Visible evidence | What can actually be seen on the image |
+| Interpretation | What the visible evidence may mean |
+| Certainty | Whether the conclusion is definite, probable, possible, or unresolved |
+| Needed confirmation | What additional data would be required before finalizing |
+
+This format is valuable because it makes the reasoning inspectable. A radiologist can quickly see what the system saw, what it inferred, what it refused to infer, and what would be needed to confirm or correct the interpretation.
+
+---
+
+## Key Blinded Findings
+
+| Finding / Issue | Visible Evidence | Interpretation | Certainty |
+|---|---|---|---|
+| Cardiac/coronary CTA | RCA and LCX labels visible | Coronary CTA body region supported | High |
+| Lobulated vascular cluster | Asterisk-marked abnormality on both panels | Complex vascular lesion favored | Probable |
+| RCA relationship | Tortuous RCA-side vessel and arrow | Possible RCA-origin feeder | Probable |
+| LCX relationship | LCX-side vessel and arrow | Possible LCX-origin feeder | Probable |
+| Internal calcified foci/septa | Bright internal foci on CT panel | Calcified septa or internal calcification likely | Probable |
+| Coronary fistula / vascular malformation | Coronary supply pattern plus vascular cluster | Leading diagnostic category | Possible to probable |
+| Exact drainage chamber | Adjacent chamber visible but unlabeled | Drainage site not established | Unresolved |
+| Coronary stenosis / occlusion | Not assessable from still figure | Cannot evaluate | Unresolved |
+| Active rupture / extravasation | No definite visual evidence | Not confirmed | Unresolved |
+
+---
+
+## Ground Truth Reconciliation
+
+After the blinded run, the ground truth was supplied.
+
+The case shows a **coronary artery–left atrial fistula**. The abnormality appears as a complex cauliflower-like vascular structure with calcified septa and sinus-like spaces. It has dual coronary arterial origin from branches of both the right coronary artery and the left circumflex artery and drains into an enlarged left atrium.
+
+Compared with the ground truth, the blinded ClarityWise output was appropriately conservative and directionally correct.
+
+It correctly identified:
+
+- cardiac/coronary CTA anatomy;
+- a complex abnormal vascular cluster;
+- apparent RCA involvement;
+- apparent LCX involvement;
+- a coronary fistula / vascular malformation as the favored diagnostic category;
+- the need to avoid overclaiming the drainage chamber from a single image.
+
+The main limitation was that it did not name the exact drainage site before the caption was supplied. Given the single-image constraint and the instruction not to overclaim, that limitation is better understood as uncertainty control rather than diagnostic failure.
+
+---
+
+## Corrected Radiology-Style Impression
+
+1. **Coronary artery–left atrial fistula** appearing as a complex cauliflower-like vascular structure with internal calcified septa and sinus-like spaces.  
+2. **Dual coronary arterial origin** from branches of both the right coronary artery and the left circumflex artery.  
+3. **Drainage into an enlarged left atrium.**  
+4. No additional acute complication can be assessed from the supplied figure and caption alone.
+
+---
+
+## What ClarityWise Did Well
+
+ClarityWise correctly avoided diagnosing from demographics or image title alone. It did not state that vessels were normal. It did not invent clinical symptoms, urgency, or treatment recommendations. It preserved uncertainty where the still image did not establish the answer.
+
+Most importantly, it identified the correct diagnostic neighborhood: a coronary vascular abnormality with probable RCA and LCX feeder relationships, favoring a fistula or vascular malformation rather than treating the abnormality as a generic mass.
+
+This is the central value of the demo: the system produced a structured, challengeable reasoning trail rather than a black-box answer.
+
+---
+
+## What Should Be Improved
+
+The coronary fistula hypothesis should be elevated more clearly above the hypervascular tumor alternative when the visible image shows tortuous coronary arterial supply and a clustered vascular-channel morphology.
+
+Future radiology formula development should strengthen the following reasoning path:
+
+```text
+coronary artery label
+→ tortuous enlarged branch
+→ vascular cluster
+→ dual feeder pattern
+→ chamber adjacency
+→ suspected coronary-cameral fistula
+→ drainage site unresolved unless visible or supplied
+```
+
+This would allow ClarityWise to make the fistula category more prominent while still avoiding an unsupported definitive drainage claim.
+
+---
+
+## Public-Safe Formula Layer
+
+The following formulas are presented as **educational reasoning scaffolds** only. They are not validated clinical scoring systems, medical-device algorithms, diagnostic probability tools, or treatment decision rules.
+
+They are intended to structure uncertainty, not to replace radiologist judgment.
+
+---
+
+### Formula 59 — Scan Entropy Differential Index
+
+```text
+SEDI = (E_s - E_b) / D_norm
+```
+
+**Public-safe meaning:**  
+SEDI is a qualitative way to ask how much the current scan appears to deviate from an expected baseline for the modality and anatomy.
+
+| Variable | Public-Safe Meaning |
+|---|---|
+| `E_s` | Current scan abnormality or complexity load |
+| `E_b` | Expected baseline complexity for that scan type |
+| `D_norm` | Normalizing factor for modality/body-region complexity |
+
+**Demo use:**  
+The coronary CTA image showed high qualitative complexity because of the unusual vascular cluster and apparent multi-vessel coronary relationship.
+
+**Guardrail:**  
+No numeric SEDI should be assigned without a defined scoring rubric and validation dataset.
+
+---
+
+### Formula 60 — Malignancy Concern Drift Ratio
+
+```text
+MPDR = P_m / max(T_s, ε)
+```
+
+**Public-safe meaning:**  
+MPDR is a qualitative safeguard asking whether malignancy concern is being raised faster than the evidence supports.
+
+| Variable | Public-Safe Meaning |
+|---|---|
+| `P_m` | Malignancy concern level |
+| `T_s` | Tissue stability or benign-support evidence |
+| `ε` | Small nonzero value to prevent division by zero |
+
+**Demo use:**  
+Malignancy was not favored because the image pattern was more consistent with a vascular/fistula-like abnormality than a solid invasive tumor.
+
+**Guardrail:**  
+This formula should not be represented as a true malignancy probability.
+
+---
+
+### Formula 61 — Radiological Interpretation Variance
+
+```text
+RIV = -abs(R_i - R_consensus) / n
+```
+
+Optional readability companion:
+
+```text
+AgreementScore = 1 + RIV
+```
+
+**Public-safe meaning:**  
+RIV is a way to compare an interpretation with a later consensus or ground truth.
+
+| Variable | Public-Safe Meaning |
+|---|---|
+| `R_i` | Initial interpretation score or coded interpretation |
+| `R_consensus` | Consensus interpretation or ground truth |
+| `n` | Normalization factor |
+
+**Demo use:**  
+In the blinded phase, consensus was unavailable, so the formula could not be numerically executed.
+
+**Guardrail:**  
+Do not compute RIV without a defined rubric and consensus reference.
+
+---
+
+### Formula 62 — Scan-PID Match Confidence
+
+```text
+SPMC = (C_r * V_d) / (1 + E_a)
+```
+
+**Public-safe meaning:**  
+SPMC is a patient-safety check asking whether the scan is correctly matched to the patient and case record.
+
+| Variable | Public-Safe Meaning |
+|---|---|
+| `C_r` | Record/credential match confidence |
+| `V_d` | Visual and metadata consistency |
+| `E_a` | Attribution uncertainty or mismatch risk |
+
+**Demo use:**  
+The static image did not include patient identifiers, accession number, DICOM metadata, or report linkage, so scan-patient matching remained unresolved.
+
+**Guardrail:**  
+Never assign high patient-study match confidence from an isolated image alone.
+
+---
+
+### Formula 63 — Overdiagnosis Entropy Load
+
+```text
+OEL = (F_p * S_d) / (E_f + 1)
+```
+
+**Public-safe meaning:**  
+OEL is a qualitative guardrail asking whether the interpretation is becoming more severe or specific than the evidence supports.
+
+| Variable | Public-Safe Meaning |
+|---|---|
+| `F_p` | False-positive pressure |
+| `S_d` | Severity distortion |
+| `E_f` | Evidence firmness |
+
+**Demo use:**  
+Calling the finding a coronary vascular abnormality or suspected fistula-like lesion was supported. Calling a definitive drainage chamber, malignancy, treatment pathway, or emergency complication from the still image alone would have increased overdiagnosis risk.
+
+**Guardrail:**  
+Use OEL to soften unsupported claims and preserve uncertainty.
+
+---
+
+## Formula Layer Takeaway
+
+The radiology formula layer was useful even without numeric scoring because it created controlled decision pressure.
+
+| Formula | Demo Function | Result |
+|---|---|---|
+| SEDI | Flagged scan complexity / abnormality burden | High qualitative complexity |
+| MPDR | Prevented unsupported malignancy escalation | Malignancy not favored without evidence |
+| RIV | Reserved final variance scoring until ground truth | Consensus unavailable during blinded run |
+| SPMC | Blocked patient-study confidence without identifiers | Patient/study match unresolved |
+| OEL | Controlled overdiagnosis risk | Prevented unsupported definitive subtype or malignancy claim |
+
+The formulas did not need to produce numeric values to be useful. In this demo, their value was structural: they governed when the system should escalate, soften, defer, or hold uncertainty.
+
+---
+
+## Patient-Friendly Summary
+
+This heart CT angiogram shows an unusual cluster of blood vessels near the heart. The blood supply appears to come from branches of both major coronary artery systems shown in the image. After the case information is supplied, the abnormality is best understood as an abnormal connection between coronary artery branches and the left atrium, one of the heart’s upper chambers.
+
+From the image alone, the system appropriately recognized the abnormal coronary vascular pattern but did not claim more than the image safely supported.
+
+---
+
+## Demo Takeaway
+
+This demo supports the usefulness of ClarityWise as a radiology reasoning scaffold. The important result is that, from a single blinded image, it produced an organized reasoning table that separated evidence from inference, flagged uncertainty, identified the correct lesion class, and avoided hallucinating a final caption-level diagnosis.
+
+The core artifact is:
+
+```text
+Finding → Visible Evidence → Interpretation → Certainty → Needed Confirmation
+```
+
+That structure is the value.
+
+It creates a reviewable radiology reasoning trail rather than a black-box answer. A radiologist, educator, QA reviewer, or trainee can inspect the reasoning, challenge the inference, confirm the evidence, and identify exactly where additional imaging or clinical context is needed.
+
+---
+
+## Final Position
+
+ClarityWise should be framed as a structured radiology reasoning and audit scaffold, not as an autonomous diagnostic replacement.
+
+For this demo, the system showed that even without full DICOM data, report text, prior imaging, clinical context, or finalized specialty formulas, it could:
+
+- identify the correct imaging domain;
+- extract relevant visible anatomy;
+- recognize the abnormal vascular pattern;
+- connect the abnormality to RCA and LCX territories;
+- favor the correct diagnostic category;
+- preserve uncertainty around the unresolved drainage site;
+- avoid unsupported malignancy or emergency claims;
+- produce an audit-ready reasoning table.
+
+That is the useful demonstration.
+
+---
+
+## Safety Notes
+
+This artifact is for public educational and technical demonstration purposes only.
+
+It should not be used to diagnose, treat, triage, or manage any patient. Real clinical interpretation requires review of the complete imaging dataset, clinical record, prior imaging, acquisition parameters, and official radiology workflow by qualified professionals.
+
+If a copyrighted radiology image or caption is used in a public repository, include only material you have permission to use, or replace it with a properly licensed figure, a link, or a synthetic demonstration image.
+
+---
+
+## Why This Case Is a Good Demo
+
+This case is useful for a radiology-reasoning demo because the vascular anatomy is visually complex. RSNA’s Top Images in Radiology commentary notes that the axial images are striking but may not make the vascular pathway easy to trace, while cinematic rendering helps depict the unusual coronary artery–left atrial fistula and supports final interpretation.
+
+That is exactly the kind of scenario where a structured reasoning scaffold can help: not by replacing the radiologist, but by forcing the analysis to separate visible evidence, suspected vessel relationships, certainty level, and needed confirmation.
+
+In this demo, ClarityWise recognized the image as coronary CTA, identified a complex vascular coronary abnormality, connected it to RCA and LCX territories, favored a fistula/vascular-malformation category, and preserved uncertainty around the drainage site until the caption was supplied.
+
+---
+
+Author: Mark S. Weinstein  
+Organization: Grounded DI LLC  
+Project: DI Radiological Analyzer Demo  
+Status: Public educational demo only — not clinical AI or a diagnostic tool.
+
+#Grounded-DI #AuditableAI #DeterministicAI #DIRadiology #MedTools #AI #Innovation 
+
+
+Source: “Cinematic Rendering of Complex Coronary Artery Left Atrial Fistula” by Mingxi Liu and Xiaojuan Guo (2). The axial images showing multiple sinuses draining into the left atrium from the coronary arteries, although striking, may not allow for easy tracing of the vasculature. The crisp images postprocessed with cinematic rendering (Fig 2), however, carefully depict this unusual entity of complex coronary artery left atrial fistula and help the interpreting radiologists reach the final diagnosis.
+
