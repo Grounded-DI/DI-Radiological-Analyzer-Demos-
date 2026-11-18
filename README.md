@@ -1,6 +1,6 @@
 # DI Radiological Analyzer Demos
 
-Public educational demonstrations by Grounded DI LLC of structured radiology-image reasoning. The record covers a blinded single-image coronary CTA exercise and a 7T TOF-MRA audit presentation.
+Grounded DI LLC demonstrates source-linked radiology image review through a blinded coronary CTA exercise and a 7T TOF-MRA audit presentation.
 
 ## What the record contains
 
@@ -11,7 +11,7 @@ Public educational demonstrations by Grounded DI LLC of structured radiology-ima
 
 The coronary CTA record separates visible evidence, anatomical interpretation, certainty, and needed confirmation. In the blinded run it identified a cardiac/coronary CTA, a complex vascular cluster, probable RCA and LCX relationships, and a coronary fistula or vascular-malformation category while leaving the exact drainage site unresolved. After the caption was supplied, the record reconciled those observations to a coronary artery–left atrial fistula with dual coronary origin.
 
-The MRA presentation is a separate educational audit artifact. It should be read as a structured demonstration of evidence capture and review, not as a clinical performance study.
+The MRA presentation shows the evidence capture and review structure in a second imaging context.
 
 ## Why it matters
 
@@ -19,10 +19,7 @@ The artifacts make the reasoning path inspectable: a reviewer can distinguish wh
 
 ## Scope and limitations
 
-- Educational demonstrations only; no clinical deployment, diagnostic product, medical-device, or treatment claim is made.
-- The CTA exercise uses one public static figure and a later ground-truth reconciliation; it is not a benchmark or independent clinical validation.
-- The formulas in the record are qualitative scaffolds, not validated clinical scores or probability tools.
-- A radiologist and other qualified clinicians retain clinical judgment.
+The CTA exercise uses one public static image with a later caption reconciliation. The formulas are qualitative aids. Clinical use and performance would require independent validation and qualified radiologist review.
 
 ## How to review
 
